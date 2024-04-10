@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
-
+import "./App.css"
+import Header from "./components/common/header";
+import Footer from "./components/common/footer/copyright";
 export const App = () => {
 	const [apiStatus, setApiStatus] = useState<string | null>(null);
 
@@ -13,8 +15,9 @@ export const App = () => {
 
 	return (
 		<div>
-			<p>Volocopter Code Challenge</p>
+			<Header />
 			<p>API Status: {apiStatus}</p>
+			<Footer />
 		</div>
 	);
 };
