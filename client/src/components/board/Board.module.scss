@@ -1,0 +1,56 @@
+@import "../../styles/variables.scss";
+
+.wrapper {
+    display: flex;
+    width: 100%;
+    height: 120px;
+    align-items: center;
+
+    &__columns {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+
+        &__pre,
+        &__in,
+        &__post {
+            background-color: #d9d9d9;
+            border-radius: 4px;
+            flex: 1;
+            padding: 10px;
+            margin: 5px;
+
+            label {
+                font-size: 14px;
+                text-transform: capitalize;
+                font-weight: 600;
+            }
+        }
+
+        &__in {
+            justify-content: center;
+            align-items: center;
+        }
+    }
+}
+
+@media (max-width: $tablet) {
+    .wrapper {
+        flex-direction: column;
+
+        &__columns {
+            flex-direction: row;
+
+            &__pre,
+            &__in,
+            &__post {
+                padding: 10px;
+                margin: 5px;
+            }
+
+            &__post {
+                margin-top: 10px;
+            }
+        }
+    }
+}

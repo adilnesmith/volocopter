@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "./App.css"
 import Header from "./components/common/header";
 import Footer from "./components/common/footer/copyright";
+import Board from "./components/board";
 export const App = () => {
 	const [apiStatus, setApiStatus] = useState<string | null>(null);
 
@@ -16,6 +17,7 @@ export const App = () => {
 	return (
 		<div>
 			<Header />
+			<Board />
 			<p>API Status: {apiStatus}</p>
 			<Footer />
 		</div>
