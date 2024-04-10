@@ -1,17 +1,22 @@
-import { FC } from 'react'
+import { FC } from 'react';
 import { HEADER_TEXT, CTA } from '../../../lib/constants/Header';
-import styles from './Header.module.scss'
+import styles from './Header.module.scss';
 
-const Header: FC = () => {
+interface HeaderProps {
+  onAddMission: () => void;
+}
+
+const Header: FC<HeaderProps> = ({ onAddMission }) => {
   return (
     <header className={styles.wrapper}>
       <div className={styles.wrapper__columns__text}>
         {HEADER_TEXT}
       </div>
       <div className={styles.wrapper__columns__cta}>
-        <button>{CTA.title}</button>
+        <button onClick={onAddMission}>{CTA.title}</button>
       </div>
-    </header >
-  )
-}
+    </header>
+  );
+};
+
 export default Header;

@@ -3,24 +3,37 @@ import "./App.css"
 import Header from "./components/common/header";
 import Footer from "./components/common/footer/copyright";
 import Board from "./components/board";
-export const App = () => {
-	const [apiStatus, setApiStatus] = useState<string | null>(null);
+import Modal from "./components/modal";
 
-	useEffect(() => {
-		fetch("/api/health")
-			.then((response) => response.json())
-			.then((data) => {
-				setApiStatus(data.status);
-			});
-	}, []);
+export const App = () => {
+	const [showModal, setShowModal] = useState(false);
+
+	const handleAddMission = () => {
+		setShowModal(true);
+	};
+
+	const handleSaveMission = (title: string, description: string) => {
+		// Logic to save the mission
+		setShowModal(false);
+	};
+
+	const handleCancel = () => {
+		setShowModal(false);
+	};
 
 	return (
 		<div>
-			<Header />
-			<Board />
-			<p>API Status: {apiStatus}</p>
+			<Header onAddMission={handleAddMission} />
+			<Board onAddMission={handleAddMission} /> {/* Pass down the function */}
 			<Footer />
+			{showModal && (
+				<Modal
+					mode="add"
+					title="Add Mission"
+					onSave={handleSaveMission}
+					onCancel={handleCancel}
+				/>
+			)}
 		</div>
 	);
 };
-
