@@ -45,6 +45,13 @@ class FlightMissionService(private val collection: MongoCollection<FlightMission
     }
 
 
+    suspend fun getMissionsByState(state: String): List<FlightMission> {
+        return try {
+            collection.find(Filters.eq("state", state)).toList()
+        } catch (e: Exception) {
+            throw RuntimeException("Failed to fetch missions by state from database: ${e.localizedMessage}")
+        }
+    }
 
 
     suspend fun updateMissionState(id: String, newState: String) {

@@ -15,6 +15,19 @@ fun Route.flightMissionRoute(service: FlightMissionService) {
                 call.respond(HttpStatusCode.InternalServerError, e.localizedMessage)
             }
         }
+        get("/state={state}") {
+            val state = call.parameters["state"]
+            if (state.isNullOrBlank()) {
+                call.respond(HttpStatusCode.BadRequest, "State parameter is missing")
+            } else {
+                try {
+                    val missions = service.getMissionsByState(state)
+                    call.respond(HttpStatusCode.OK, missions)
+                } catch (e: Exception) {
+                    call.respond(HttpStatusCode.InternalServerError, e.localizedMessage)
+                }
+            }
+        }
         post {
             try {
                 val mission = call.receiveOrNull<FlightMission>() ?: throw IllegalArgumentException("Mission data is missing or malformed")
