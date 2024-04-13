@@ -9,8 +9,11 @@ import io.ktor.routing.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import com.fasterxml.jackson.databind.*
+import com.fasterxml.jackson.databind.module.SimpleModule
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer
 import flightMissionRoute
 import io.ktor.jackson.*
+import org.bson.types.ObjectId
 import org.springframework.boot.autoconfigure.SpringBootApplication
 
 @SpringBootApplication
@@ -22,6 +25,7 @@ fun main() {
         install(ContentNegotiation) {
             jackson {
                 enable(SerializationFeature.INDENT_OUTPUT)
+                registerModule(SimpleModule().addSerializer(ObjectId::class.java, ToStringSerializer()))
             }
         }
         install(StatusPages) {
