@@ -35,7 +35,7 @@ const Board: FC<BoardProps> = ({ onAddMission, onDeleteMission }) => {
     };
 
     fetchMissions();
-  }, []);
+  }, [onAddMission, onDeleteMission]);
 
   return (
     <section className={styles.wrapper}>
@@ -46,7 +46,7 @@ const Board: FC<BoardProps> = ({ onAddMission, onDeleteMission }) => {
             key={mission.id}
             title={mission.title}
             description={mission.description}
-            onAddMission={onAddMission}
+            state={mission.state}
             onDeleteMission={onDeleteMission}
           />
         ))}
@@ -58,7 +58,7 @@ const Board: FC<BoardProps> = ({ onAddMission, onDeleteMission }) => {
             key={mission.id}
             title={mission.title}
             description={mission.description}
-            onAddMission={onAddMission}
+            state={mission.state} // Pass mission state to Card
             onDeleteMission={onDeleteMission}
           />
         ))}
@@ -70,7 +70,7 @@ const Board: FC<BoardProps> = ({ onAddMission, onDeleteMission }) => {
             key={mission.id}
             title={mission.title}
             description={mission.description}
-            onAddMission={onAddMission}
+            state={mission.state} // Pass mission state to Card
             onDeleteMission={onDeleteMission}
           />
         ))}
