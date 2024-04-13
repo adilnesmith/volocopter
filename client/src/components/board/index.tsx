@@ -63,10 +63,11 @@ const Board: FC<BoardProps> = ({ onAddMission, onDeleteMission }) => {
 
   const renderColumn = (state: string) => {
     const filteredMissions = missions.filter(mission => mission.state === state);
-    if (filteredMissions.length === 0) return null;
+    const missionCount = filteredMissions.length;
+    if (missionCount === 0) return null;
     return (
       <div className={styles.wrapper__columns}>
-        <label>{state.replace('_', '-')}</label>
+        <label>{state.replace('_', '-')} ({missionCount})</label>
         {filteredMissions.map(mission => (
           <Card
             key={mission._id}
@@ -79,6 +80,7 @@ const Board: FC<BoardProps> = ({ onAddMission, onDeleteMission }) => {
       </div>
     );
   };
+
 
   if (loading) {
     return <div>Loading...</div>;
