@@ -3,10 +3,22 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
-import java.util.*
 
 fun Route.flightMissionRoute(service: FlightMissionService) {
     route("/missions") {
+        // CORS preflight request handling
+        options {
+            call.respond(HttpStatusCode.OK)
+        }
+
+        // CORS headers for all routes in the "/missions" route
+        intercept(ApplicationCallPipeline.Features) {
+            call.response.headers.append("Access-Control-Allow-Origin", "*")
+            call.response.headers.append("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+            call.response.headers.append("Access-Control-Allow-Headers", "Authorization, Content-Type")
+            call.response.headers.append("Access-Control-Max-Age", "3600")
+        }
+
         get {
             try {
                 val missions = service.getAllMissions()
@@ -65,6 +77,5 @@ fun Route.flightMissionRoute(service: FlightMissionService) {
                 call.respond(HttpStatusCode.InternalServerError, e.localizedMessage)
             }
         }
-
     }
 }

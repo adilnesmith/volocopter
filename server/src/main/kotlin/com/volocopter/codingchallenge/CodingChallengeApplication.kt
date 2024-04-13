@@ -18,6 +18,7 @@ class CodingChallengeApplication
 
 fun main() {
     embeddedServer(Netty, port = 8000, host = "0.0.0.0") {
+        install(DefaultHeaders)
         install(ContentNegotiation) {
             jackson {
                 enable(SerializationFeature.INDENT_OUTPUT)
@@ -29,13 +30,9 @@ fun main() {
             }
         }
         install(CallLogging)
-
         val flightMissionService = FlightMissionService(MongoConfig.collection)
-
         routing {
             flightMissionRoute(flightMissionService)
         }
     }.start(wait = true)
-
 }
-
