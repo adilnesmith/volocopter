@@ -60,11 +60,20 @@ const Board: FC<BoardProps> = ({ onAddMission, onDeleteMission }) => {
     }
   };
 
-
   const renderColumn = (state: string) => {
     const filteredMissions = missions.filter(mission => mission.state === state);
     const missionCount = filteredMissions.length;
-    if (missionCount === 0) return null;
+
+    // If there are no missions in this column, render only the label
+    if (missionCount === 0) {
+      return (
+        <div className={styles.wrapper__columns}>
+          <label>{state.replace('_', '-')} (0)</label>
+        </div>
+      );
+    }
+
+    // If there are missions, render the column with missions
     return (
       <div className={styles.wrapper__columns}>
         <label>{state.replace('_', '-')} ({missionCount})</label>
@@ -80,6 +89,8 @@ const Board: FC<BoardProps> = ({ onAddMission, onDeleteMission }) => {
       </div>
     );
   };
+
+
 
 
   if (loading) {
