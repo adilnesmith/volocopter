@@ -3,13 +3,14 @@ import styles from './Card.module.scss';
 import Modal from '../modal';
 
 interface CardProps {
+  key: string;
   title: string;
   description: string;
   state?: 'pre_flight' | 'in_flight' | 'post_flight';
   onDeleteMission: () => void;
 }
 
-const Card: FC<CardProps> = ({ title, description, state, onDeleteMission }) => {
+const Card: FC<CardProps> = ({ key, title, description, state, onDeleteMission }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const getBorderColor = () => {

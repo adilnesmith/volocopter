@@ -1,10 +1,10 @@
-import { FC, useState, useEffect, useRef } from 'react'; // Add useRef to the import statement
+import { FC, useState, useEffect, useRef } from 'react';
 import styles from './Board.module.scss';
 import Card from '../card';
 import axios, { CancelTokenSource } from 'axios';
-
+import { toast } from 'react-toastify';
 interface Mission {
-  id: number;
+  _id: string;
   title: string;
   description: string;
   state: string;
@@ -12,7 +12,7 @@ interface Mission {
 
 interface BoardProps {
   onAddMission: () => void;
-  onDeleteMission: () => void;
+  onDeleteMission: (id: string) => void;
 }
 
 const Board: FC<BoardProps> = ({ onAddMission, onDeleteMission }) => {
@@ -45,21 +45,35 @@ const Board: FC<BoardProps> = ({ onAddMission, onDeleteMission }) => {
       }
     };
   }, [onAddMission, onDeleteMission]);
+  const handleDeleteMission = async (id: string) => {
+    if (!id) {
+      console.error('Invalid mission ID:', id);
+      return;
+    }
+
+    try {
+      await axios.delete(`http://localhost:8000/missions?id=${id}`);
+      setMissions(missions.filter(mission => mission._id !== id));
+      toast.success('Mission deleted successfully!');
+    } catch (error) {
+      console.error('Error deleting mission:', error);
+    }
+  };
+
 
   const renderColumn = (state: string) => {
     const filteredMissions = missions.filter(mission => mission.state === state);
     if (filteredMissions.length === 0) return null;
-
     return (
       <div className={styles.wrapper__columns}>
         <label>{state.replace('_', '-')}</label>
         {filteredMissions.map(mission => (
           <Card
-            key={mission.id}
+            key={mission._id}
             title={mission.title}
             description={mission.description}
             state={mission.state}
-            onDeleteMission={onDeleteMission}
+            onDeleteMission={() => handleDeleteMission(mission._id)}
           />
         ))}
       </div>
