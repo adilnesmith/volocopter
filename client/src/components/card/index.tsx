@@ -3,11 +3,13 @@ import styles from './Card.module.scss';
 import Modal from '../modal';
 
 interface CardProps {
+  title: string;
+  description: string;
   onAddMission: () => void;
   onDeleteMission: () => void;
 }
 
-const Card: FC<CardProps> = ({ onAddMission, onDeleteMission }) => {
+const Card: FC<CardProps> = ({ title, description, onAddMission, onDeleteMission }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const handleDeleteClick = () => {
@@ -27,16 +29,16 @@ const Card: FC<CardProps> = ({ onAddMission, onDeleteMission }) => {
     <>
       <div className={styles.wrapper}>
         <div className={styles.wrapper__head}>
-          <h5>title</h5>
+          <h5>{title}</h5>
           <i onClick={handleDeleteClick}>X</i>
         </div>
         <hr />
-        <p>description</p>
+        <p>{description}</p>
       </div>
       {showDeleteModal && (
         <Modal
           mode="delete"
-          title="Mission Name"
+          title={title}
           onDelete={handleDeleteConfirm}
           onCancel={handleDeleteCancel}
         />
