@@ -3,6 +3,7 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import java.util.*
 
 fun Route.flightMissionRoute(service: FlightMissionService) {
     route("/missions") {
@@ -18,7 +19,6 @@ fun Route.flightMissionRoute(service: FlightMissionService) {
             call.response.headers.append("Access-Control-Allow-Headers", "Authorization, Content-Type")
             call.response.headers.append("Access-Control-Max-Age", "3600")
         }
-
         get {
             try {
                 val missions = service.getAllMissions()
@@ -77,5 +77,6 @@ fun Route.flightMissionRoute(service: FlightMissionService) {
                 call.respond(HttpStatusCode.InternalServerError, e.localizedMessage)
             }
         }
+
     }
 }
