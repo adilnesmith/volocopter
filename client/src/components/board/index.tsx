@@ -1,7 +1,7 @@
-import { FC, useState, useEffect } from 'react';
+import { FC, useState, useEffect, useRef } from 'react'; // Add useRef to the import statement
 import styles from './Board.module.scss';
 import Card from '../card';
-import axios from 'axios';
+import axios, { CancelTokenSource } from 'axios';
 
 interface Mission {
   id: number;
@@ -16,32 +16,44 @@ interface BoardProps {
 }
 
 const Board: FC<BoardProps> = ({ onAddMission, onDeleteMission }) => {
-  const [preFlightMissions, setPreFlightMissions] = useState<Mission[]>([]);
-  const [flightMissions, setFlightMissions] = useState<Mission[]>([]);
-  const [postFlightMissions, setPostFlightMissions] = useState<Mission[]>([]);
+  const [missions, setMissions] = useState<Mission[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const cancelTokenSourceRef = useRef<CancelTokenSource>();
 
   useEffect(() => {
-    const fetchMissions = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/missions');
-        const missions = response.data;
-
-        setPreFlightMissions(missions.filter(mission => mission.state === 'pre_flight'));
-        setFlightMissions(missions.filter(mission => mission.state === 'in_flight'));
-        setPostFlightMissions(missions.filter(mission => mission.state === 'post_flight'));
+        cancelTokenSourceRef.current = axios.CancelToken.source();
+        const response = await axios.get('http://localhost:8000/missions', {
+          cancelToken: cancelTokenSourceRef.current.token,
+        });
+        setMissions(response.data);
+        setLoading(false);
       } catch (error) {
-        console.error('Error fetching missions:', error);
+        if (!axios.isCancel(error)) {
+          console.error('Error fetching missions:', error);
+          setLoading(false);
+        }
       }
     };
 
-    fetchMissions();
+    fetchData();
+
+    return () => {
+      if (cancelTokenSourceRef.current) {
+        cancelTokenSourceRef.current.cancel('Component unmounted');
+      }
+    };
   }, [onAddMission, onDeleteMission]);
 
-  return (
-    <section className={styles.wrapper}>
-      <div className={styles.wrapper__columns__pre}>
-        <label>pre-flight</label>
-        {preFlightMissions.map(mission => (
+  const renderColumn = (state: string) => {
+    const filteredMissions = missions.filter(mission => mission.state === state);
+    if (filteredMissions.length === 0) return null;
+
+    return (
+      <div className={styles.wrapper__columns}>
+        <label>{state.replace('_', '-')}</label>
+        {filteredMissions.map(mission => (
           <Card
             key={mission.id}
             title={mission.title}
@@ -51,30 +63,18 @@ const Board: FC<BoardProps> = ({ onAddMission, onDeleteMission }) => {
           />
         ))}
       </div>
-      <div className={styles.wrapper__columns__in}>
-        <label>flight</label>
-        {flightMissions.map(mission => (
-          <Card
-            key={mission.id}
-            title={mission.title}
-            description={mission.description}
-            state={mission.state} // Pass mission state to Card
-            onDeleteMission={onDeleteMission}
-          />
-        ))}
-      </div>
-      <div className={styles.wrapper__columns__post}>
-        <label>post-flight</label>
-        {postFlightMissions.map(mission => (
-          <Card
-            key={mission.id}
-            title={mission.title}
-            description={mission.description}
-            state={mission.state} // Pass mission state to Card
-            onDeleteMission={onDeleteMission}
-          />
-        ))}
-      </div>
+    );
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <section className={styles.wrapper}>
+      {renderColumn('pre_flight')}
+      {renderColumn('in_flight')}
+      {renderColumn('post_flight')}
     </section>
   );
 };
