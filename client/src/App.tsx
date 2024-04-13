@@ -4,7 +4,8 @@ import Header from "./components/common/header";
 import Footer from "./components/common/footer/copyright";
 import Board from "./components/board";
 import Modal from "./components/modal";
-
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 export const App = () => {
 	const [showModal, setShowModal] = useState(false);
 
@@ -26,6 +27,10 @@ export const App = () => {
 			<Header onAddMission={handleAddMission} />
 			<Board onAddMission={handleAddMission} /> {/* Pass down the function */}
 			<Footer />
+			<ToastContainer
+
+				position="bottom-center"
+			/>
 			{showModal && (
 				<Modal
 					mode="add"

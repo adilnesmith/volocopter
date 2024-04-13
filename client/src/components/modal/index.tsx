@@ -1,11 +1,13 @@
 import { FC, useState } from 'react';
 import styles from './Modal.module.scss';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 interface ModalProps {
-    mode: 'add' | 'delete'; // Mode to determine the purpose of the modal
+    mode: 'add' | 'delete';
     title: string;
-    onDelete?: () => void; // onDelete function for deleting mission
-    onSave?: (title: string, description: string) => void; // onSave function for adding mission
+    onDelete?: () => void;
+    onSave?: (title: string, description: string) => void;
     onCancel: () => void;
 }
 
@@ -13,11 +15,46 @@ const Modal: FC<ModalProps> = ({ mode, title, onDelete, onSave, onCancel }) => {
     const [newTitle, setNewTitle] = useState('');
     const [newDescription, setNewDescription] = useState('');
 
-    const handleSave = () => {
-        if (onSave) {
-            onSave(newTitle, newDescription);
+    const handleSave = async () => {
+        try {
+            const response = await axios.post('http://localhost:8000/missions', {
+                title: newTitle,
+                description: newDescription,
+                state: "pre_flight"
+            });
+
+            if (response.status === 201) {
+                toast.success('Mission successfully created!');
+                setNewTitle('');
+                setNewDescription('');
+                if (onSave) {
+                    onSave(newTitle, newDescription);
+                }
+                onCancel();
+            } else {
+                // Handle other status codes if needed
+            }
+        } catch (error) {
+
+            console.error('Error:', error);
+            if (error.response) {
+
+                if (error.response.status === 400) {
+                    toast.error(error.response.data);
+                } else {
+                    toast.error('An error occurred while processing your request.');
+                }
+            } else if (error.request) {
+
+                toast.error('No response received from the server.');
+            } else {
+
+                toast.error('An error occurred while processing your request.');
+            }
         }
     };
+
+
 
     const handleDelete = () => {
         if (onDelete) {
