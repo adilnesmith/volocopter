@@ -3,14 +3,15 @@ import styles from './Card.module.scss';
 import Modal from '../modal';
 
 interface CardProps {
-  key: string;
+  id: string;
   title: string;
   description: string;
   state?: 'pre_flight' | 'in_flight' | 'post_flight';
   onDeleteMission: () => void;
+  onMoveMission: (id: string, newState: string) => void;
 }
 
-const Card: FC<CardProps> = ({ key, title, description, state, onDeleteMission }) => {
+const Card: FC<CardProps> = ({ id, title, description, state, onDeleteMission, onMoveMission }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const getBorderColor = () => {
@@ -37,9 +38,30 @@ const Card: FC<CardProps> = ({ key, title, description, state, onDeleteMission }
     setShowDeleteModal(false);
   };
 
+  const handleDragStart = (event: React.DragEvent<HTMLDivElement>) => {
+    event.dataTransfer.setData('text/plain', id);
+  };
+
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+  };
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>, newState: string) => {
+    event.preventDefault();
+    const missionId = event.dataTransfer.getData('text/plain');
+    onMoveMission(missionId, newState);
+  };
+
   return (
     <>
-      <div className={styles.wrapper} style={{ borderColor: getBorderColor(), }}>
+      <div
+        className={styles.wrapper}
+        style={{ borderColor: getBorderColor() }}
+        draggable
+        onDragStart={handleDragStart}
+        onDragOver={handleDragOver}
+        onDrop={(event) => handleDrop(event, state || '')}
+      >
         <div className={styles.wrapper__head}>
           <h5>{title}</h5>
           <i onClick={handleDeleteClick}>X</i>

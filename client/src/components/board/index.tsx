@@ -60,38 +60,67 @@ const Board: FC<BoardProps> = ({ onAddMission, onDeleteMission }) => {
     }
   };
 
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>, newState: string) => {
+    event.preventDefault();
+  };
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>, newState: string) => {
+    event.preventDefault();
+    const missionId = event.dataTransfer.getData('text/plain');
+    handleMoveMission(missionId, newState);
+  };
+
+  const handleMoveMission = async (missionId: string, newState: string) => {
+    try {
+      const existingMission = missions.find(mission => mission._id === missionId);
+      if (!existingMission || existingMission.state === newState) {
+        return;
+      }
+      const updatedMissions = missions.map(mission =>
+        mission._id === missionId ? { ...mission, state: newState } : mission
+      );
+      setMissions(updatedMissions);
+      await axios.put(`http://localhost:8000/missions?id=${missionId}&state=${newState}`);
+      toast.success('Mission moved successfully!');
+    } catch (error) {
+      console.error('Error moving mission:', error);
+    }
+  };
   const renderColumn = (state: string) => {
     const filteredMissions = missions.filter(mission => mission.state === state);
     const missionCount = filteredMissions.length;
-
-    // If there are no missions in this column, render only the label
     if (missionCount === 0) {
       return (
-        <div className={styles.wrapper__columns}>
+        <div
+          className={styles.wrapper__columns}
+          onDragOver={(event) => handleDragOver(event, state)}
+          onDrop={(event) => handleDrop(event, state)}
+        >
           <label>{state.replace('_', '-')} (0)</label>
         </div>
       );
     }
-
-    // If there are missions, render the column with missions
     return (
-      <div className={styles.wrapper__columns}>
+      <div
+        className={styles.wrapper__columns}
+        onDragOver={(event) => handleDragOver(event, state)}
+        onDrop={(event) => handleDrop(event, state)}
+      >
         <label>{state.replace('_', '-')} ({missionCount})</label>
         {filteredMissions.map(mission => (
           <Card
             key={mission._id}
+            id={mission._id}
             title={mission.title}
             description={mission.description}
             state={mission.state}
             onDeleteMission={() => handleDeleteMission(mission._id)}
+            onMoveMission={handleMoveMission}
           />
         ))}
       </div>
     );
   };
-
-
-
 
   if (loading) {
     return <div>Loading...</div>;
