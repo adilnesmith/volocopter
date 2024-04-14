@@ -1,10 +1,8 @@
 import { FC } from 'react';
 import { HEADER_TEXT, CTA } from '../../../lib/constants/Header';
 import styles from './Header.module.scss';
+import { HeaderProps } from '../../../lib/types/Header';
 
-interface HeaderProps {
-  onAddMission: () => void;
-}
 
 const Header: FC<HeaderProps> = ({ onAddMission }) => {
   return (

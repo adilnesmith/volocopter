@@ -1,11 +1,14 @@
+@import ".././../../../styles/variables.scss";
+
 .wrapper {
+    font-size: $footerFontSize;
     position: fixed;
     bottom: 0;
     width: 100%;
-    height: 40px;
+    height: $footerSize;
     text-align: center;
-    background-color: black;
-    color: #fff;
-    line-height: 40px;
-    border-top: 1px solid #fff;
+    background-color: $black-color;
+    color: $primary-color;
+    line-height: $footerSize;
+    border-top: 1px solid $primary-color;
 }

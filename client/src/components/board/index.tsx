@@ -3,17 +3,10 @@ import styles from './Board.module.scss';
 import Card from '../card';
 import axios, { CancelTokenSource } from 'axios';
 import { toast } from 'react-toastify';
-interface Mission {
-  _id: string;
-  title: string;
-  description: string;
-  state: string;
-}
+import { BoardProps, Mission } from '../../lib/types/Board';
+import { ENDPOINTS } from '../../lib/api';
+import { API_DOMAIN } from '../../lib/general-config';
 
-interface BoardProps {
-  onAddMission: () => void;
-  onDeleteMission: (id: string) => void;
-}
 
 const Board: FC<BoardProps> = ({ onAddMission, onDeleteMission }) => {
   const [missions, setMissions] = useState<Mission[]>([]);
@@ -24,7 +17,7 @@ const Board: FC<BoardProps> = ({ onAddMission, onDeleteMission }) => {
     const fetchData = async () => {
       try {
         cancelTokenSourceRef.current = axios.CancelToken.source();
-        const response = await axios.get('http://localhost:8000/missions', {
+        const response = await axios.get(`${API_DOMAIN}${ENDPOINTS.GET.missions}`, {
           cancelToken: cancelTokenSourceRef.current.token,
         });
         setMissions(response.data);
@@ -52,7 +45,7 @@ const Board: FC<BoardProps> = ({ onAddMission, onDeleteMission }) => {
     }
 
     try {
-      await axios.delete(`http://localhost:8000/missions?id=${id}`);
+      await axios.delete(`${API_DOMAIN}${ENDPOINTS.DELETE.mission(id)}`);
       setMissions(missions.filter(mission => mission._id !== id));
       toast.success('Mission deleted successfully!');
     } catch (error) {
@@ -80,7 +73,7 @@ const Board: FC<BoardProps> = ({ onAddMission, onDeleteMission }) => {
         mission._id === missionId ? { ...mission, state: newState } : mission
       );
       setMissions(updatedMissions);
-      await axios.put(`http://localhost:8000/missions?id=${missionId}&state=${newState}`);
+      await axios.put(`${API_DOMAIN}${ENDPOINTS.PUT.mission(missionId, newState)}`);
       toast.success('Mission moved successfully!');
     } catch (error) {
       console.error('Error moving mission:', error);

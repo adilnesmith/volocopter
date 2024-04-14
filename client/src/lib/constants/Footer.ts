@@ -1,0 +1,1 @@
+export const FOOTER_TEXT = '2024 Volocopter. All Rights Reserved';

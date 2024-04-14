@@ -1,6 +1,11 @@
 {
   "compilerOptions": {
-    "baseUrl": "src/",
+    "baseUrl": "src/", // baseURL is not wokring so i am skiping this
+    "paths": {
+      "common/*": [
+        "common/*"
+      ],
+    },
     "target": "ES2020",
     "useDefineForClassFields": true,
     "lib": [
@@ -10,14 +15,12 @@
     ],
     "module": "ESNext",
     "skipLibCheck": true,
-    /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    /* Linting */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,

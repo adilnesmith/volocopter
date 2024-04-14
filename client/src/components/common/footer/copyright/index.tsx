@@ -1,10 +1,10 @@
 import { FC } from 'react';
 import styles from './Copyright.module.scss';
-
-const Footer: FC<{}> = () => {
+import { FOOTER_TEXT } from '../../../../lib/constants/Footer';
+const Footer: FC = () => {
   return (
     <footer className={styles.wrapper}>
-      &copy; 2024 Volocopter. All Rights Reserved
+      &copy; {FOOTER_TEXT}
     </footer>
   )
 }

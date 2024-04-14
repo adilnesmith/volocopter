@@ -1,69 +1,65 @@
 import { FC, useState } from 'react';
-import styles from './Modal.module.scss';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-
-interface ModalProps {
-    mode: 'add' | 'delete';
-    title: string;
-    onDelete?: () => void;
-    onSave?: (title: string, description: string) => void;
-    onCancel: () => void;
-}
+import { ModalProps } from '../../lib/types/Modal';
+import { ENDPOINTS } from '../../lib/api';
+import { API_DOMAIN } from '../../lib/general-config';
+import styles from './Modal.module.scss';
 
 const Modal: FC<ModalProps> = ({ mode, title, onDelete, onSave, onCancel }) => {
-    const [newTitle, setNewTitle] = useState('');
-    const [newDescription, setNewDescription] = useState('');
+    const [newTitle, setNewTitle] = useState<string>('');
+    const [newDescription, setNewDescription] = useState<string>('');
 
     const handleSave = async () => {
         try {
-            const response = await axios.post('http://localhost:8000/missions', {
-                title: newTitle,
-                description: newDescription,
-                state: "pre_flight"
-            });
+            const response = await axios.post(
+                `${API_DOMAIN}${ENDPOINTS.POST.createMission()}`,
+                {
+                    title: newTitle,
+                    description: newDescription,
+                    state: "pre_flight"
+                }
+            );
 
             if (response.status === 201) {
                 toast.success('Mission successfully created!');
                 setNewTitle('');
                 setNewDescription('');
-                if (onSave) {
-                    onSave(newTitle, newDescription);
-                }
+                onSave && onSave(newTitle, newDescription);
                 onCancel();
             } else {
                 // Handle other status codes if needed
             }
         } catch (error) {
-
             console.error('Error:', error);
-            if (error.response) {
-
-                if (error.response.status === 400) {
-                    toast.error(error.response.data);
-                } else {
-                    toast.error('An error occurred while processing your request.');
-                }
-            } else if (error.request) {
-
-                toast.error('No response received from the server.');
-            } else {
-
-                toast.error('An error occurred while processing your request.');
-            }
+            handleError(error);
         }
     };
 
+    const handleError = (error: any) => {
+        if (error.response) {
+            handleResponseError(error);
+        } else if (error.request) {
+            toast.error('No response received from the server.');
+        } else {
+            toast.error('An error occurred while processing your request.');
+        }
+    };
 
+    const handleResponseError = (error: any) => {
+        if (error.response.status === 400) {
+            toast.error(error.response.data);
+        } else {
+            toast.error('An error occurred while processing your request.');
+        }
+    };
 
     const handleDelete = () => {
-        if (onDelete) {
-            onDelete();
-        }
+        onDelete && onDelete();
     };
 
     const handleCancel = () => {
-        onCancel();
+        onCancel && onCancel();
     };
 
     return (

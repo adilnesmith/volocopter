@@ -2,14 +2,7 @@ import React, { FC, useState } from 'react';
 import styles from './Card.module.scss';
 import Modal from '../modal';
 
-interface CardProps {
-  id: string;
-  title: string;
-  description: string;
-  state?: 'pre_flight' | 'in_flight' | 'post_flight';
-  onDeleteMission: () => void;
-  onMoveMission: (id: string, newState: string) => void;
-}
+import { CardProps } from '../../lib/types/Card';
 
 const Card: FC<CardProps> = ({ id, title, description, state, onDeleteMission, onMoveMission }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -17,11 +10,11 @@ const Card: FC<CardProps> = ({ id, title, description, state, onDeleteMission, o
   const getBorderColor = () => {
     switch (state) {
       case 'in_flight':
-        return 'blue';
+        return '#467aff';
       case 'post_flight':
-        return 'green';
+        return '#49ce80';
       default:
-        return 'brown'; // Default color
+        return '#fa902c'; // Default color
     }
   };
 
@@ -64,10 +57,10 @@ const Card: FC<CardProps> = ({ id, title, description, state, onDeleteMission, o
       >
         <div className={styles.wrapper__head}>
           <h5>{title}</h5>
-          <i onClick={handleDeleteClick}>X</i>
+          <span onClick={handleDeleteClick}>x</span>
         </div>
-        <hr />
-        <p>{description}</p>
+        <hr className={styles.wrapper__divider} />
+        <p className={styles.wrapper__description}>{description}</p>
       </div>
       {showDeleteModal && (
         <Modal
