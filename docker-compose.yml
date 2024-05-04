@@ -4,7 +4,7 @@ services:
     server:
         build: server/
         ports:
-            - 8080
+            - 8000
         networks:
             - back-tier
 
@@ -17,8 +17,15 @@ services:
             - 3000
         networks:
             - back-tier
-        links:
+        depends_on:
             - server
+
+    mongo:
+        image: mongo
+        ports:
+            - 27017:27017
+        networks:
+            - back-tier
 
     proxy:
         image: nginx:stable-alpine
@@ -29,9 +36,6 @@ services:
         networks:
             - front-tier
             - back-tier
-        links:
-            - client
-            - server
         depends_on:
             - client
             - server
@@ -40,4 +44,3 @@ networks:
     front-tier:
         attachable: true
     back-tier: {}
-

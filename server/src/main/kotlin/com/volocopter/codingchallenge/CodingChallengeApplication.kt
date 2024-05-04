@@ -15,8 +15,11 @@ import flightMissionRoute
 import io.ktor.jackson.*
 import org.bson.types.ObjectId
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
 
-@SpringBootApplication
+@SpringBootApplication(
+    exclude = [MongoAutoConfiguration::class],
+)
 class CodingChallengeApplication
 
 fun main() {
